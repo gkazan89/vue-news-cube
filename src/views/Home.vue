@@ -20,6 +20,7 @@
         </div>
         <div class="reading" v-if="category.currentArticleVisible">
           <p v-html="info.response.content.blocks.body[0].bodyHtml"></p>
+          <!-- need to add 'powered by the guardian logo' -->
           <div class="collapse">
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" id="show-dialog" v-on:click="collapse(category)">COLLAPSE ARTICLE</button>
           </div>
