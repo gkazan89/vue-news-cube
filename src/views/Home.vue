@@ -12,7 +12,7 @@
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" v-on:click="downOne(category)">Back</button>
           </div>
           <div class="kids">
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" id="show-dialog" v-on:click="read(category)">READ ARTICLE</button>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" id="show-dialog" v-on:click="read2(category)">READ ARTICLE</button>
           </div>
           <div class="kids">
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" v-on:click="upOne(category)">Next</button>
@@ -30,120 +30,124 @@
 </template>
 
 <style>
+h2 {
+  text-transform: uppercase;
+}
 
-  h2 {
-    text-transform: uppercase;
-  }
+.list,
+.reading {
+  border: 1px solid grey;
+  text-align: center;
+}
 
-  .list, .reading {
-    border: 1px solid grey;
-    text-align: center;
-  }
+.reading img {
+  max-height: 300px;
+  max-width: 500px;
+}
 
-  .reading img{
-    max-height: 300px;
-    max-width: 500px;
-  }
+.reading p {
+  text-align: left;
+  font-size: 20px;
+  padding: 10px;
+}
 
-  .reading p {
-    text-align: left;
-    font-size: 20px;
-    padding: 10px;
-  }
+.buttonNavs {
+  display: flex;
+}
 
-  .buttonNavs {
-    display: flex;
-  }
-
-  .kids {
-    margin: auto;
-  }
-  .collapse {
-    text-align: center;
-  }
+.kids {
+  margin: auto;
+}
+.collapse {
+  text-align: center;
+}
 </style>
 
 
 <script>
-  var axios = require("axios");
-  export default {
-    data: function() {
-      return {
-        categories: [],
-        info: [],
-        // can't affect all other categories....
-      };
+var axios = require("axios");
+export default {
+  data: function() {
+    return {
+      categories: [],
+      info: []
+      // can't affect all other categories....
+    };
+  },
+  // make request to categories view to retrieve first and second item in category JSON data
+  created: function() {
+    axios.get("http://localhost:3000/api/articles").then(
+      function(response) {
+        console.log("categories");
+        console.log(response);
+        this.categories = response.data;
+        this.categories.forEach(category => {
+          console.log("getArticleImage for", category.data[0]);
+          this.getArticleImage(category.data[0]);
+        });
+        // this.apiUrls = response.data.apiUrl;
+        // console.log("HERE ARE YOUR PICS");
+        // console.log(this);
+      }.bind(this)
+    );
+  },
+
+  methods: {
+    upOne: function(category) {
+      if (category.currentArticleIndex < category.data.length) {
+        category.currentArticleIndex += 1;
+        this.getArticleImage(category.data[category.currentArticleIndex]);
+      }
+      // console.log(category.currentArticleIndex);
     },
-    // make request to categories view to retrieve first and second item in category JSON data
-    created: function() {
-      axios.get("http://localhost:3000/api/articles").then(
-        function(response) {
-          console.log("categories");
-          console.log(response);
-          this.categories = response.data;
-          this.categories.forEach(category => {
-            console.log("getArticleImage for", category.data[0]);
-            this.getArticleImage(category.data[0]);
-          });
-          // this.apiUrls = response.data.apiUrl;
-          // console.log("HERE ARE YOUR PICS");
-          // console.log(this);
+    downOne: function(category) {
+      if (category.currentArticleIndex > 0) {
+        category.currentArticleIndex -= 1;
+      }
+      // console.log(category.currentArticleIndex);
+    },
+    read2: function(category) {
+      var link = category.data[category.currentArticleIndex].apiUrl;
+      axios
+        .get("http://localhost:3000/api/read/", {
+          params: { api_URL: link}
+        })
+        .then(function(response) {
+          this.info = response.data.info;
         }.bind(this)
-      );
+        );
+      console.log("CURRENT STATUS:");
+      console.log(category.currentArticleVisible);
+      this.categories.forEach(cat => (cat.currentArticleVisible = false));
+      category.currentArticleVisible = !category.currentArticleVisible;
+      console.log("NEW STATUS:");
+      console.log(category.currentArticleVisible);
+      console.log(this);
+
     },
 
-    methods: {
-      upOne: function(category) {
-        if (category.currentArticleIndex < category.data.length) {
-          category.currentArticleIndex += 1;
-          this.getArticleImage(category.data[category.currentArticleIndex]);
-        }
-        // console.log(category.currentArticleIndex);
-      },
-      downOne: function(category) {
-        if (category.currentArticleIndex > 0) {
-          category.currentArticleIndex -= 1;
-        }
-        // console.log(category.currentArticleIndex);
-      },
-      read: function(category) {
-        console.log(category.currentArticleIndex);
-        var link = category.data[category.currentArticleIndex].apiUrl;
-        var key = process.env.VUE_APP_MY_API_KEY;
-        var test = axios.get(link + "?show-blocks=all&api-key=" + key).then(
-          function(response) {
-            this.info = response.data;
-          }.bind(this)
-        );
-        // perhaps include a quick edge case check up here to collapse the open one, same code will work on the cube
-
-        console.log("CURRENT STATUS:");
-        console.log(category.currentArticleVisible);
-        this.categories.forEach((cat) => cat.currentArticleVisible = false);
-        category.currentArticleVisible = !category.currentArticleVisible;
-        console.log("NEW STATUS:");
-        console.log(category.currentArticleVisible);
-        console.log(this);
-      },
-      getArticleImage: function(article) {
-        if (!article.imageUrl) {
-          console.log('get the image using ', article.apiUrl);
-          var params = {
-            api_URL: article.apiUrl
-          };
-          // console.log("LOOK AT ME!!!");
-          // console.log(params);
-          axios.get("http://localhost:3000/api/pic/",{params: {api_URL: article.apiUrl}}).then(function(response) {
+    getArticleImage: function(article) {
+      if (!article.imageUrl) {
+        console.log("get the image using ", article.apiUrl);
+        var params = {
+          api_URL: article.apiUrl
+        };
+        // console.log("LOOK AT ME!!!");
+        // console.log(params);
+        axios
+          .get("http://localhost:3000/api/pic/", {
+            params: { api_URL: article.apiUrl }
+          })
+          .then(function(response) {
             article.imageUrl = response.data.img;
-          }
-          );
-        }
-      },
-      collapse: function(category) {
-        category.currentArticleVisible = !category.currentArticleVisible;
-        console.log("RIDIN DIRTY");
+          });
       }
     },
-    computed: {}
-  };
+    collapse: function(category) {
+      category.currentArticleVisible = !category.currentArticleVisible;
+      console.log("RIDIN DIRTY");
+    }
+  },
+  computed: {}
+};
 </script>
