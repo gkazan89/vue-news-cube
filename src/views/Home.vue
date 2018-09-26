@@ -20,13 +20,13 @@
         </div>
         <div class="reading" v-if="category.currentArticleVisible">
           <p v-html="info.response.content.blocks.body[0].bodyHtml"></p>
-          <!-- need to add 'powered by the guardian logo' -->
           <div class="collapse">
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" id="show-dialog" v-on:click="collapse(category)">COLLAPSE ARTICLE</button>
           </div>
         </div>
       </div>  
     </div>
+    <a href="https://www.theguardian.com/us" target="_blank"><img src="https://static.guim.co.uk/sys-images/Guardian/Pix/pictures/2010/03/01/poweredbyguardianBLACK.png"></a>
   </div>
 </template>
 
@@ -62,6 +62,7 @@ h2 {
 .collapse {
   text-align: center;
 }
+
 </style>
 
 

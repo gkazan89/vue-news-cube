@@ -39,6 +39,7 @@
         </div> 
       </div>  
     </div>
+    <a href="https://www.theguardian.com/us" target="_blank"><img src="https://static.guim.co.uk/sys-images/Guardian/Pix/pictures/2010/03/01/poweredbyguardianBLACK.png"></a>
   </div>
 </template>
 
@@ -147,6 +148,9 @@
 .content img {
   max-height: 300px;
   max-width: 500px;
+  display: block;
+  margin: auto;
+
 }
 
 .content p {
@@ -161,6 +165,7 @@
 .radio-group {
   display: flex;
   margin-right: 10px;
+  margin-bottom: 30px;
 }
 
 .radio-group-item {
