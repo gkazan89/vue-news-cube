@@ -6,7 +6,7 @@
         <h2>{{category.category}} News</h2>
         <h4>{{category.data[category.currentArticleIndex].webTitle}}</h4>
         <img v-if="category.data[category.currentArticleIndex].imageUrl" v-bind:src="category.data[category.currentArticleIndex].imageUrl" alt="">
-        <img v-if="!category.data[category.currentArticleIndex].imageUrl" src="http://thehill.us/wp-content/uploads/2017/05/wait.jpg">
+        <img v-if="!category.data[category.currentArticleIndex].imageUrl" src="https://thehill.us/wp-content/uploads/2017/05/wait.jpg">
         <div class="buttonNavs">
           <div class="kids">
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" v-on:click="downOne(category)">Back</button>
