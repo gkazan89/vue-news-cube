@@ -54,6 +54,8 @@ h2 {
 
 .buttonNavs {
   display: flex;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .kids {
